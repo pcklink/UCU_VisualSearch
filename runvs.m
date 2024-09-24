@@ -1,4 +1,4 @@
-function runvs(student,debug)
+function runvs(student,settingsnr,debug)
 
 %% PTB3 script for ======================================================
 % VISUAL SEARCH experiments
@@ -13,14 +13,19 @@ function runvs(student,debug)
 % - Interspersed info possible
 % - Block designs
 % - Three variants ('BH'/'NS'/'RB')
-%==========================================================================
+
+%% ========================================================================
+
 clc; QuitScript = false;
 warning off; %#ok<*WNOFF>
-if nargin < 2
+if nargin < 3
     debug = false;
-    if nargin < 1
-        fprintf('Please define an experiment type\n');
-        QuitScript = true;
+    if nargin < 2
+        settingsnr = 1;
+        if nargin < 1
+            fprintf('Please define an experiment type\n');
+            QuitScript = true;
+        end
     end
 end
 DebugRect = [0 0 1024 768];
@@ -41,7 +46,7 @@ end
 %% Read in variables ----------------------------------------------------
 % First get the settings
 [RunPath,~,~] = fileparts(mfilename('fullpath'));
-SettingsFile = ['settings_' student];
+SettingsFile = ['settings_' student '_' num2str(settingsnr)];
 run(fullfile(RunPath, SettingsFile));
 
 %% Create data folder if it doesn't exist yet and go there --------------
@@ -57,12 +62,13 @@ try
     end
 
     %% Initialize -------------------------------------------------------
-    if Debug
+    if debug
         LOG.Subject = 'TEST';
         LOG.Gender = 'x';
         LOG.Age = 0;
         LOG.Handedness = 'R';
         LOG.DateTimeStr = datestr(datetime('now'), 'yyyyMMdd_HHmm'); %#ok<*DATST>
+        LOG.SubID = 0;
     else
         % Get registration info
         LOG.Subject = [];
@@ -78,7 +84,9 @@ try
             % Get timestring id
             LOG.DateTimeStr = datestr(datetime('now'), 'yyyymmdd_HHMM');
         end
+        LOG.SubID = randi(10000); % random number between 1-10000
     end
+    LOG.FileName = [LOG.Subject '_' LOG.DateTimeStr];
 
     % Reduce PTB3 verbosity
     oldLevel = Screen('Preference', 'Verbosity', 0); %#ok<*NASGU>
@@ -121,14 +129,15 @@ try
     [HARDWARE.window, HARDWARE.windowRect] = ...
         Screen('OpenWindow',HARDWARE.ScrNr,...
         STIM.BackColor*HARDWARE.white,WindowRect,[],2);
-
+    HARDWARE.CenterRect = [HARDWARE.windowRect(3)-HARDWARE.windowRect(1) ...
+        HARDWARE.windowRect(4)-HARDWARE.windowRect(2)];
     % Define blend function for anti-aliassing
     [sourceFactorOld, destinationFactorOld, colorMaskOld] = ...
         Screen('BlendFunction', HARDWARE.window, ...
         GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     % Initialize text options
-    Screen('Textfont',HARDWARE.window,GENERAL.Font);
+    Screen('Textfont',HARDWARE.window,GENERAL.Font); %#ok<*USENS>
     Screen('TextSize',HARDWARE.window,GENERAL.FontSize);
     Screen('TextStyle',HARDWARE.window,GENERAL.FontStyle);
 
@@ -167,7 +176,9 @@ try
     vbl = Screen('Flip', HARDWARE.window);
 
     %% Process stimuli --------------------------------------------------
+    disp('processing stimuli');
     run(['procstim_' student]);
+    disp('done')
 
     %% Instructions -----------------------------------------------------
     % General instruction screen
@@ -182,22 +193,39 @@ try
     LOG.ExpOnset = vbl;
 
     %% Cycle over blocks ------------------------------------------------
-    for B = 1:STIM.nBlocks
+    B=1; 
+    while ~QuitScript && B <= STIM.nBlocks
+        BT = BLOCK(B).BlockType;
+        
         % show block instructions --
         % draw background
-
+        Screen('FillRect',HARDWARE.window,...
+            STIM.BackColor*HARDWARE.white);
         % draw text
+        DrawFormattedText(HARDWARE.window,...
+            STIM.Block(BT).TextStart,'center','center',...
+            STIM.TextIntensity);
+        vbl = Screen('Flip', HARDWARE.window);
+        % wait for key press
+        pause(1); 
+        KbWait; while KbCheck; end
 
-        for T = 1:STIM.TrialsPerBlock
-            % show instruction --
-            % draw background
-            Screen('FillRect',HARDWARE.window,...
+        %% Cycle over trials -------
+        T=1;
+        while ~QuitScript && T <= length(BLOCK(B).Trials)
+            % repeat instruction every nth trial--
+            if T>1 && mod(T-1,STIM.Block(BT).RepeatTextEveryNth)==0
+                % draw background
+                Screen('FillRect',HARDWARE.window,...
                     STIM.BackColor*HARDWARE.white);
-            % draw text
-            DrawFormattedText(HARDWARE.window,...
-                'Blablabla\n\n>> press key <<','center','center',STIM.TextIntensity);
-            vbl = Screen('Flip', HARDWARE.window);
-            
+                DrawFormattedText(HARDWARE.window,...
+                    STIM.Block(BT).TextStart,'center','center',...
+                    STIM.TextIntensity);
+                vbl = Screen('Flip', HARDWARE.window);
+                % wait for key press
+                pause(1);
+                KbWait; while KbCheck; end
+            end
 
             % show fixation screen --
             % draw background
@@ -205,7 +233,7 @@ try
                     STIM.BackColor*HARDWARE.white);
             % draw fixation dot
             Screen('FillOval', HARDWARE.window,...
-                    STIM.Fix.Color.*HARDWARE.white,FixRect);
+                    STIM.Fix.Color.*HARDWARE.white,STIM.Fix.Rect);
             vbl = Screen('Flip', HARDWARE.window);
             pause(STIM.Trial.Timing.FixDur)
 
@@ -215,12 +243,54 @@ try
                     STIM.BackColor*HARDWARE.white);
             % draw stimulus
             run(['drawstim_' student]);
+            vbl = Screen('Flip', HARDWARE.window);
+            t0 = GetSecs; 
+            ResponseGiven = false;
 
-            % no fixation
+            % Get response and log things --
+            % Check for key-presses
+            while ~ResponseGiven
+                [keyIsDown,secs,keyCode]=KbCheck; %#ok<*ASGLU>
+                if keyIsDown
+                    if keyCode(KeyBreak) %break when esc
+                        %fprintf('Escape pressed\n')
+                        QuitScript=1;
+                        break;
+                    elseif keyCode(Key1)
+                        LOG.Block(B).Trial(T).RT = secs - t0;
+                        LOG.Block(B).Trial(T).Resp = 1;
+                        ResponseGiven = true;
+                    elseif keyCode(Key2)
+                        %fprintf('Key 0 pressed\n')
+                        LOG.Block(B).Trial(T).RT = secs - t0;
+                        LOG.Block(B).Trial(T).Resp = 0;
+                        ResponseGiven = true;
+                    end
+                end
+            end
 
-            % Get response and log things
+            % Give feedback
+            if STIM.Exp.FB.Do && ...
+                    ((B>1 && T>0 && mod(T,STIM.Exp.FB.EveryNthTrial)==0) || ...
+                    (B==1 && T>=STIM.Exp.FB.StartAfter && mod(T,STIM.Exp.FB.EveryNthTrial)==0))
+                % draw background
+                Screen('FillRect',HARDWARE.window,...
+                    STIM.BackColor*HARDWARE.white);
+                fbi = randi(length(STIM.Exp.FB.Text));
+                DrawFormattedText(HARDWARE.window,...
+                    STIM.Exp.FB.Text{fbi},'center','center',...
+                    STIM.TextIntensity);
+                vbl = Screen('Flip', HARDWARE.window);
+                pause(STIM.Exp.FB.Duration);
+            end
 
+            % ITI
+            Screen('FillRect',HARDWARE.window,STIM.BackColor*HARDWARE.white);
+            vbl = Screen('Flip', HARDWARE.window);
+            pause(STIM.Exp.ITI);
+            T=T+1;
         end
+        B=B+1;
     end
 
 
@@ -245,18 +315,14 @@ try
     end
     [~,~] = mkdir(fullfile(StartFolder,DataFolder,HARDWARE.LogLabel));
     save(fullfile(StartFolder,DataFolder,HARDWARE.LogLabel,LOG.FileName),...
-        'HARDWARE','GENERAL','STIM','LOG');
+        'HARDWARE','GENERAL','STIM','BLOCK','LOG');
     
     % also save a csv file for quick stats
-    save_csv(student,LOG);
-
+    run(['write_csv_' student]);
 
 catch e %#ok<CTCH> %if there is an error the script will go here
     %% Clean up ---------------------------------------------------------
     fprintf(1,'There was an error! The message was:\n%s',e.message);
-    if HARDWARE.DoGammaCorrection
-        Screen('LoadNormalizedGammaTable',HARDWARE.ScrNr,OLD_Gamtable);
-    end
     Screen('CloseAll');ListenChar();ShowCursor;
     psychrethrow(psychlasterror);
 end

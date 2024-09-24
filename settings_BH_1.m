@@ -19,7 +19,7 @@ HARDWARE.LogLabel = 'SelfEfficacy'; % change this!
 
 %% General parameters ===================================================
 GENERAL.Font = 'Arial';
-GENERAL.FontSize = 16;
+GENERAL.FontSize = 20;
 GENERAL.FontStyle = 0;
 
 %% Stimulus features (basic) ============================================
@@ -37,51 +37,67 @@ STIM.WelcomeText = ['Blablabla\n\n'...
                     '>> Press any key to start <<'];
 
 %% Stimulus features (specific) =========================================
-STIM.FB.positive = 'You are faster than average\n Well done!';
-STIM.FB.neutral = 'Keep going';
+STIM.Positions.n = [6 4]; % [w h]
+STIM.Positions.jitter = 2; % dva
+STIM.ResponseBar.size = [0.2 0.5]; % dva
+STIM.ResponseBar.color = [0.5 0.5 0.5];
 
-STIM.FB.EveryNthTrial = 5; % leave [] for never
+STIM.Trial.Timing.FixDur = 2; % s
 
-STIM.Positions.n = [8 5]; % [w h]
-STIM.Positions.jitter = 1; % dva
-
-STIM.Trial.Timing.FixDur = 1; % s
-
-STIM.TrialType(1).Target = 'rect'; 
-STIM.TrialType(1).TargetSize = [1 3]; % dva
+STIM.TrialType(1).Target = 'oval'; %
+STIM.TrialType(1).TargetSize = [2 2]; % [w h] dva
 STIM.TrialType(1).TargetColor = [1 1 1];
-STIM.TrialType(1).TargetOri = 45;
 STIM.TrialType(1).TargetPresent = true;
-STIM.TrialType(1).Distractor = 'rect';
-STIM.TrialType(1).DistractorOri = -45;
-STIM.TrialType(1).DistractorSize = [1 3];
+STIM.TrialType(1).Distractor = {'rect'};
+STIM.TrialType(1).DistractorSize = [2 2];
 STIM.TrialType(1).DistractorColor = {[0 0 0]};
-STIM.TrialType(1).nDistract = 39;
+STIM.TrialType(1).nDistract = 23;
 STIM.TrialType(1).SearchType = 'feature'; % conjunction/feature
 
 STIM.TrialType(2).Target = 'rect'; 
-STIM.TrialType(2).TargetSize = [1 3]; % dva
+STIM.TrialType(2).TargetSize = [2 2]; % dva
 STIM.TrialType(2).TargetColor = [1 1 1];
-STIM.TrialType(2).TargetOri = 45;
 STIM.TrialType(2).TargetPresent = true;
-STIM.TrialType(2).Distractor = 'rect';
-STIM.TrialType(2).DistractorOri = [-45 45] ;
-STIM.TrialType(2).DistractorSize = [1 3];
-STIM.TrialType(2).DistractorColor = {[0 0 0;1 1 1],[0 0 0]};
-STIM.TrialType(2).nDistract = 39;
+STIM.TrialType(2).Distractor = {'rect','oval'};
+STIM.TrialType(2).DistractorSize = [2 2];
+STIM.TrialType(2).DistractorColor = {[0 0 0] ,[0 0 0;1 1 1]};
+% Distractor{1} can have have Color{1}, 
+% Distractor{1} can have have Color{2}, etc
+STIM.TrialType(2).nDistract = 23;
 STIM.TrialType(2).SearchType = 'conjunction'; % conjunction/feature
 
-STIM.Block(1).TrialTypes = [1 2];
+STIM.Block(1).TrialTypes = [1 1];
 STIM.Block(1).RandomTrialTypes = true;
 STIM.Block(1).TrialRepeats = 10;
-STIM.Block(1).TextStart = ['White left present [Y/N]?\n\n'...
-                    '>> Press any key to start <<'];
+STIM.Block(1).TextStart = ['Search white square, report bar orientation\n\n'...
+    'Horizontal=1 Vertical=0\n\n'...
+    '>> Press any key to start <<'];
+STIM.Block(1).RepeatTextEveryNth = 5; 
 
-STIM.Key1 = 'y';
-STIM.Key2 = 'n';
+STIM.Block(2).TrialTypes = [2 2];
+STIM.Block(2).RandomTrialTypes = true;
+STIM.Block(2).TrialRepeats = 10;
+STIM.Block(2).TextStart = ['Search oval, report bar orientation\n\n'...
+    'Horizontal=1 Vertical=0\n\n'...
+    '>> Press any key to start <<'];
+STIM.Block(2).RepeatTextEveryNth = 5; 
 
-STIM.Exp.Blocks = 1; % you can do multiple repeats of the same Blocktype
+STIM.Key1 = '1!';
+STIM.Key2 = '0)';
+
+STIM.Exp.Blocks = [2]; % you can do multiple repeats of the same Blocktype
 STIM.Exp.RandomBlocks = true;
+
+STIM.Exp.FB.Do = true;
+STIM.Exp.FB.Duration = 2; % seconds
+STIM.Exp.FB.Text = {'Better than 90% of participants', ...
+    'Far above average performance', 'Doing fantastic!'}; 
+% you can add more, one will randomly be chosen.
+STIM.Exp.FB.Type = 'Positive'; % Neutral/Positive
+STIM.Exp.FB.StartAfter = 10; % only start giving feedback after this many trials
+STIM.Exp.FB.EveryNthTrial = 5; 
+
+STIM.Exp.ITI = 1;
 
 %% Saving the data ======================================================
 % here you can remove the actual images from the log to save space

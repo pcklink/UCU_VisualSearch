@@ -12,7 +12,7 @@ switch HARDWARE.Location
         HARDWARE.DistFromScreen = 570;
 end
 
-HARDWARE.LogLabel = 'SelfEfficacy'; % change this!
+HARDWARE.LogLabel = 'Reward'; % change this!
 % will be used to generate subfolders for dfferent log types
 
 %% General parameters ===================================================
@@ -44,38 +44,41 @@ STIM.Trial.Timing.FixDur = 2; % s
 
 STIM.TrialType(1).Target = 'oval'; %
 STIM.TrialType(1).TargetSize = [2 2]; % [w h] dva
-STIM.TrialType(1).TargetColor = [1 1 1];
+STIM.TrialType(1).TargetColor = [1 0 0];
 STIM.TrialType(1).Distractor = {'rect'};
 STIM.TrialType(1).DistractorSize = [2 2];
-STIM.TrialType(1).DistractorColor = {[0 0 0]};
+STIM.TrialType(1).DistractorColor = {[0 0 1]};
 STIM.TrialType(1).nDistract = 23;
 STIM.TrialType(1).SearchType = 'feature'; % conjunction/feature
+STIM.TrialType(1).TrialText = ['Search red oval, report bar orientation\n\n'...
+    'Horizontal=1 Vertical=0\n\n'...
+    '>> Press any key to start <<']; % leave empty for none
+
 
 STIM.TrialType(2).Target = 'rect'; 
 STIM.TrialType(2).TargetSize = [2 2]; % dva
-STIM.TrialType(2).TargetColor = [1 1 1];
+STIM.TrialType(2).TargetColor = [0 1 0];
 STIM.TrialType(2).Distractor = {'rect','oval'};
 STIM.TrialType(2).DistractorSize = [2 2];
-STIM.TrialType(2).DistractorColor = {[0 0 0] ,[0 0 0;1 1 1]};
+STIM.TrialType(2).DistractorColor = {[1 0 0; 0 0 1] ,[1 0 0;0 1 0;0 0 1]};
 % Distractor{1} can have have Color{1}, 
 % Distractor{1} can have have Color{2}, etc
 STIM.TrialType(2).nDistract = 23;
 STIM.TrialType(2).SearchType = 'conjunction'; % conjunction/feature
+STIM.TrialType(2).TrialText = ['Search green rectangle, report bar orientation\n\n'...
+    'Horizontal=1 Vertical=0\n\n'...
+    '>> Press any key to start <<']; % leave empty for none
 
 STIM.Block(1).TrialTypes = [1 1];
 STIM.Block(1).RandomTrialTypes = true;
 STIM.Block(1).TrialRepeats = 10;
-STIM.Block(1).TextStart = ['Search white square, report bar orientation\n\n'...
-    'Horizontal=1 Vertical=0\n\n'...
-    '>> Press any key to start <<'];
+STIM.Block(1).TextStart = '>> Press any key to start <<'; 
 STIM.Block(1).RepeatTextEveryNth = 5; 
 
 STIM.Block(2).TrialTypes = [2 2];
 STIM.Block(2).RandomTrialTypes = true;
 STIM.Block(2).TrialRepeats = 10;
-STIM.Block(2).TextStart = ['Search oval, report bar orientation\n\n'...
-    'Horizontal=1 Vertical=0\n\n'...
-    '>> Press any key to start <<'];
+STIM.Block(2).TextStart = '>> Press any key to start <<';
 STIM.Block(2).RepeatTextEveryNth = 5; 
 
 STIM.Key1 = '1!';
@@ -84,7 +87,7 @@ STIM.Key2 = '0)';
 STIM.Exp.Blocks = [2]; % you can do multiple repeats of the same Blocktype
 STIM.Exp.RandomBlocks = true;
 
-STIM.Exp.FB.Do = true;
+STIM.Exp.FB.Do = false;
 STIM.Exp.FB.Duration = 2; % seconds
 STIM.Exp.FB.Text = {'Better than 90% of participants', ...
     'Far above average performance', 'Doing fantastic!'}; 

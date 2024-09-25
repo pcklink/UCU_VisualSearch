@@ -38,6 +38,7 @@ for i = 1:length(STIM.images.loadcategories)
         STIM.images.files(i,j).cat = catfld;
         STIM.images.files(i,j).fld = f(j).folder;
         STIM.images.files(i,j).fn = f(j).name;
+        STIM.images.files(i,j).fid = f(j).name(1:10);
         img = imread(fullfile(f(j).folder,f(j).name));
         img = rgb2gray(img);
         cimg = imcrop(img, STIM.images.crop);
@@ -45,36 +46,6 @@ for i = 1:length(STIM.images.loadcategories)
             Screen('MakeTexture',HARDWARE.window,cimg);
         STIM.images.maxfile(i).nr = j;
     end
-end
-
-%% Preprocess some trialtypes ---
-for TT = 1:length(STIM.TrialType)
-    STIM.TrialType(TT).TRect = [0 0 ...
-        STIM.TrialType(TT).TargetSize.*HARDWARE.Deg2Pix];
-    STIM.TrialType(TT).DRect = [0 0 ...
-        STIM.TrialType(TT).DistractorSize.*HARDWARE.Deg2Pix];
-
-    % find cat-index
-    ci = find(strcmp(STIM.images.loadcategories,...
-        STIM.TrialType(TT).TargetFld)==1,1,'first');
-    % get a file / texture
-    switch STIM.TrialType(TT).Target
-        case 'random'
-            j = randi(STIM.images.maxfile(ci).nr);
-            STIM.TrialType(TT).texture = ...
-                STIM.images.files(ci,j).targtex;
-        otherwise
-            for j=1:STIM.images.maxfile(ci).nr
-                if strcmp(STIM.images.files(ci,j).fn,...
-                        STIM.TrialType(TT).Target)
-                    STIM.TrialType(TT).targtex = ...
-                        STIM.images.files(ci,j).targtex;
-                end
-            end
-    end
-    distidx = randperm(STIM.images.maxfile(ci).nr);
-    STIM.TrialType(TT).disttex = [STIM.images.files(ci,...
-        distidx(1:STIM.TrialType(TT).nDistract)).targtex];
 end
 
 %% Blocks and trials ---
@@ -122,6 +93,9 @@ for BB = 1:length(BlockOrder)
         dpos =  1:size(BLOCK(BB).Trial(T).Pos,1);
         dpos(BLOCK(BB).Trial(T).TarPos) = [];
         dpos = Shuffle(dpos);
+        dpos = dpos(1:STIM.TrialType(TI).nDistract);
 
+        BLOCK(BB).Trial(T).DistPos = ...
+            BLOCK(BB).Trial(T).Pos(dpos,:);
     end
 end

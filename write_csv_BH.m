@@ -16,11 +16,11 @@ for B = 1:length(LOG.Block)
         CSVLOG(r).Block = B; %#ok<*SAGROW>
         CSVLOG(r).Trial = T;
         BT = BLOCK(B).BlockType;
+        TT = BLOCK(B).Trial(T).TT;
         CSVLOG(r).SearchType = ...
-            STIM.TrialType(BT).SearchType;
+            STIM.TrialType(TT).SearchType;
         CSVLOG(r).FeedbackType = ...
-            STIM.Exp.FB.Type;
-        TT = BLOCK(BB).Trial(T).TT;
+            STIM.Exp.FB.Type;      
         CSVLOG(r).TargetShape = ...
             STIM.TrialType(TT).Target;
         CSVLOG(r).TargetColor = ...
@@ -38,4 +38,3 @@ LOGTABLE = struct2table(CSVLOG);
 writetable(LOGTABLE, ...
     fullfile(StartFolder,DataFolder,HARDWARE.LogLabel,...
     [LOG.FileName '.csv']),'Delimiter', ','); 
-

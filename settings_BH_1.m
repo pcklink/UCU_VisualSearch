@@ -52,6 +52,7 @@ STIM.TrialType(1).DistractorSize = [2 2];
 STIM.TrialType(1).DistractorColor = {[0 0 0]};
 STIM.TrialType(1).nDistract = 23;
 STIM.TrialType(1).SearchType = 'feature'; % conjunction/feature
+STIM.TrialType(1).TrialText = [];
 
 STIM.TrialType(2).Target = 'rect'; 
 STIM.TrialType(2).TargetSize = [2 2]; % dva
@@ -63,11 +64,12 @@ STIM.TrialType(2).DistractorColor = {[0 0 0] ,[0 0 0;1 1 1]};
 % Distractor{1} can have have Color{2}, etc
 STIM.TrialType(2).nDistract = 23;
 STIM.TrialType(2).SearchType = 'conjunction'; % conjunction/feature
+STIM.TrialType(2).TrialText = [];
 
 STIM.Block(1).TrialTypes = [1 1];
 STIM.Block(1).RandomTrialTypes = true;
 STIM.Block(1).TrialRepeats = 10;
-STIM.Block(1).TextStart = ['Search white square, report bar orientation\n\n'...
+STIM.Block(1).TextStart = ['Search oval, report bar orientation\n\n'...
     'Horizontal=1 Vertical=0\n\n'...
     '>> Press any key to start <<'];
 STIM.Block(1).RepeatTextEveryNth = 5; 
@@ -75,7 +77,7 @@ STIM.Block(1).RepeatTextEveryNth = 5;
 STIM.Block(2).TrialTypes = [2 2];
 STIM.Block(2).RandomTrialTypes = true;
 STIM.Block(2).TrialRepeats = 10;
-STIM.Block(2).TextStart = ['Search oval, report bar orientation\n\n'...
+STIM.Block(2).TextStart = ['Search white square, report bar orientation\n\n'...
     'Horizontal=1 Vertical=0\n\n'...
     '>> Press any key to start <<'];
 STIM.Block(2).RepeatTextEveryNth = 5; 
@@ -83,7 +85,7 @@ STIM.Block(2).RepeatTextEveryNth = 5;
 STIM.Key1 = '1!';
 STIM.Key2 = '0)';
 
-STIM.Exp.Blocks = [2]; % you can do multiple repeats of the same Blocktype
+STIM.Exp.Blocks = [1 2]; % you can do multiple repeats of the same Blocktype
 STIM.Exp.RandomBlocks = true;
 
 STIM.Exp.FB.Do = true;

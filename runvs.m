@@ -15,7 +15,6 @@ function runvs(student,settingsnr,debug)
 % - Three variants ('BH'/'NS'/'RB')
 
 %% ========================================================================
-
 clc; QuitScript = false;
 warning off; %#ok<*WNOFF>
 if nargin < 3
@@ -178,7 +177,7 @@ try
     %% Process stimuli --------------------------------------------------
     disp('processing stimuli');
     run(['procstim_' student]);
-    disp('done')
+    %disp('done')
 
     %% Instructions -----------------------------------------------------
     % General instruction screen
@@ -191,14 +190,25 @@ try
     fprintf('\n>>Press key to start<<\n');
     vbl = Screen('Flip', HARDWARE.window);
     LOG.ExpOnset = vbl;
+    KbWait; while KbCheck; end
 
     %% Cycle over blocks ------------------------------------------------
     B=1; 
     while ~QuitScript && B <= STIM.nBlocks
         BT = BLOCK(B).BlockType;
         
-        % if variant NS, show emotion story
+        %% if variant NS, show emotion story --
         if strcmp(student,'NS')
+            % draw background
+            Screen('FillRect',HARDWARE.window,...
+                STIM.BackColor*HARDWARE.white);
+            % draw text
+            DrawFormattedText(HARDWARE.window,...
+                'Please read the following story','center','center',...
+                STIM.TextIntensity);
+            vbl = Screen('Flip', HARDWARE.window);
+            pause(1);
+            
             % draw background
             Screen('FillRect',HARDWARE.window,...
                 STIM.BackColor*HARDWARE.white);
@@ -214,8 +224,7 @@ try
             KbWait; while KbCheck; end
         end
 
-
-        % show block instructions --
+        %% show block instructions --
         % draw background
         Screen('FillRect',HARDWARE.window,...
             STIM.BackColor*HARDWARE.white);
@@ -231,7 +240,7 @@ try
         %% Cycle over trials -------
         T=1;
         while ~QuitScript && T <= length(BLOCK(B).Trials)
-            % repeat instruction every nth trial--
+            %% repeat instruction every nth trial--
             if T>1 && mod(T-1,STIM.Block(BT).RepeatTextEveryNth)==0
                 % draw background
                 Screen('FillRect',HARDWARE.window,...
@@ -245,7 +254,21 @@ try
                 KbWait; while KbCheck; end
             end
 
-            % show fixation screen --
+            %% trial-based instructions --
+            if ~isempty(STIM.TrialType(BLOCK(B).Trial(T).TT).TrialText)
+                % draw background
+                Screen('FillRect',HARDWARE.window,...
+                    STIM.BackColor*HARDWARE.white);
+                DrawFormattedText(HARDWARE.window,...
+                    STIM.TrialType(BLOCK(B).Trial(T).TT).TrialText,'center','center',...
+                    STIM.TextIntensity);
+                vbl = Screen('Flip', HARDWARE.window);
+                % wait for key press
+                pause(1);
+                KbWait; while KbCheck; end
+            end
+
+            %% show fixation screen --
             % draw background
             Screen('FillRect',HARDWARE.window,...
                     STIM.BackColor*HARDWARE.white);
@@ -255,7 +278,7 @@ try
             vbl = Screen('Flip', HARDWARE.window);
             pause(STIM.Trial.Timing.FixDur)
 
-            % show stimulus --
+            %% show stimulus --
             % draw background
             Screen('FillRect',HARDWARE.window,...
                     STIM.BackColor*HARDWARE.white);
@@ -287,7 +310,7 @@ try
                 end
             end
 
-            % Give feedback
+            %% Give feedback --
             if STIM.Exp.FB.Do && ...
                     ((B>1 && T>0 && mod(T,STIM.Exp.FB.EveryNthTrial)==0) || ...
                     (B==1 && T>=STIM.Exp.FB.StartAfter && mod(T,STIM.Exp.FB.EveryNthTrial)==0))
@@ -302,7 +325,7 @@ try
                 pause(STIM.Exp.FB.Duration);
             end
 
-            % ITI
+            %% ITI
             Screen('FillRect',HARDWARE.window,STIM.BackColor*HARDWARE.white);
             vbl = Screen('Flip', HARDWARE.window);
             pause(STIM.Exp.ITI);
@@ -310,7 +333,6 @@ try
         end
         B=B+1;
     end
-
 
     %% Restore screen
     Screen('CloseAll');ListenChar();ShowCursor;
@@ -320,7 +342,6 @@ try
     else
         fprintf('Quit the script by pressing escape\n');
     end
-
 
     %% Save the data ----------------------------------------------------
     % remove the images from the log to save space

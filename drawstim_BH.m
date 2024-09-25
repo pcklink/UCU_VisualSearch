@@ -2,7 +2,7 @@
 Bidx = B;
 BTidx = BT;
 Tidx = T;
-TTidx = BLOCK(BB).Trial(T).TT;
+TTidx = BLOCK(B).Trial(T).TT;
 
 % target
 xy = BLOCK(Bidx).Trial(Tidx).Pos(...

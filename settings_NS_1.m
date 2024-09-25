@@ -39,7 +39,7 @@ STIM.Positions.n = [4 3]; % [w h]
 STIM.Positions.jitter = 3; % dva
 
 STIM.Trial.Timing.FixDur = 2; % s
-
+STIM.images.Database = 'RAFD';
 STIM.images.loadcategories = {'neutral','happy','angry'};
 STIM.images.crop = [120, 120, 450, 600];
 

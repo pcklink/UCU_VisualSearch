@@ -33,7 +33,7 @@ end
 %% Preprocess images ---
 for i = 1:length(STIM.images.loadcategories)
     catfld = STIM.images.loadcategories{i};
-    f = dir(fullfile('images','RAFD',catfld,'*.jpg'));
+    f = dir(fullfile('images',STIM.images.Database,catfld,'*.jpg'));
     for j=1:length(f)
         STIM.images.files(i,j).cat = catfld;
         STIM.images.files(i,j).fld = f(j).folder;

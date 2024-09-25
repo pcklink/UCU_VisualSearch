@@ -97,7 +97,3 @@ STIM.Exp.FB.StartAfter = 10; % only start giving feedback after this many trials
 STIM.Exp.FB.EveryNthTrial = 5; 
 
 STIM.Exp.ITI = 1;
-
-%% Saving the data ======================================================
-% here you can remove the actual images from the log to save space
-STIM.RemoveImagesFromLog = false;

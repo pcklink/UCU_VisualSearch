@@ -1,55 +1,39 @@
-function runvs(student,settingsnr,debug)
+function run_colrew(settingsnr,debug)
 
 %% PTB3 script for ======================================================
-% VISUAL SEARCH experiments
+% COLOR-REWARD association experiments
 % Chris Klink: p.c.klink@uu.nl
 
-% Response: choose one of two keys (learn cue-response)
+% Response: choose one of three keys 
 
 % In short:
 % - Instruction appears
-% - Search array appears
+% - Stimulus appears
 % - Subject reports as soon as possible
 % - Interspersed info possible
 % - Block designs
-% - Three variants ('BH'/'NS'/'RB')
 
 %% ========================================================================
 clc; QuitScript = false;
 warning off; %#ok<*WNOFF>
-if nargin < 3
+if nargin < 2
     debug = false;
-    if nargin < 2
+    if nargin < 1
         settingsnr = 1;
-        if nargin < 1
-            fprintf('Please define an experiment type\n');
-            QuitScript = true;
-        end
     end
 end
 DebugRect = [0 0 1024 768];
-
-%% ----------------------------------------------------------------------
-switch student
-    case 'BH'
-        fprintf('Welcome at Bella''s experiment\n')
-    case 'NS'
-        fprintf('Welcome at Nicole''s experiment\n')
-    case 'RB'
-        fprintf('Welcome at Ruby''s experiment\n')
-    otherwise
-        fprintf('Unknown student code. Typo?\n');
-        QuitScript = true;
-end
+fprintf('Welcome at Ruby''s prologue experiment\n')
+QuitScript = false;
 
 %% Read in variables ----------------------------------------------------
 % First get the settings
 [RunPath,~,~] = fileparts(mfilename('fullpath'));
-SettingsFile = ['settings_' student '_' num2str(settingsnr)];
+SettingsFile = ['settings_colrew_' num2str(settingsnr)];
 run(fullfile(RunPath, SettingsFile));
 
-%% Create data folder if it doesn't exist yet and go there --------------
-DataFolder = ['Data_' student];
+%% Create data folder if it doesn't exist yet ---------------------------
+DataFolder = 'Data_ColRew';
 StartFolder = pwd;
 [~,~] = mkdir(fullfile(StartFolder,DataFolder));
 
@@ -100,6 +84,7 @@ try
     %Define response keys
     Key1 = KbName(STIM.Key1); %#ok<*NODEF>
     Key2 = KbName(STIM.Key2);
+    Key3 = KbName(STIM.Key3);
     KeyFix = KbName('space');
 
     if ~IsLinux
@@ -176,7 +161,7 @@ try
 
     %% Process stimuli --------------------------------------------------
     disp('processing stimuli');
-    run(['procstim_' student]);
+    run('procstim_colrew');
     %disp('done')
 
     %% Instructions -----------------------------------------------------
@@ -187,43 +172,16 @@ try
     % draw text
     DrawFormattedText(HARDWARE.window,STIM.WelcomeText,'center',....
         'center',STIM.TextIntensity);
-    fprintf('\n>>Press key to start<<\n');
+    fprintf('>>Press key to start<<\n');
     vbl = Screen('Flip', HARDWARE.window);
     LOG.ExpOnset = vbl;
     KbWait; while KbCheck; end
 
     %% Cycle over blocks ------------------------------------------------
-    B=1; 
+    B=1; RespRec = false;
     while ~QuitScript && B <= STIM.nBlocks
         BT = BLOCK(B).BlockType;
         
-        %% if variant NS, show emotion story --
-        if strcmp(student,'NS')
-            % draw background
-            Screen('FillRect',HARDWARE.window,...
-                STIM.BackColor*HARDWARE.white);
-            % draw text
-            DrawFormattedText(HARDWARE.window,...
-                'Please read the following story','center','center',...
-                STIM.TextIntensity);
-            vbl = Screen('Flip', HARDWARE.window);
-            pause(1);
-            
-            % draw background
-            Screen('FillRect',HARDWARE.window,...
-                STIM.BackColor*HARDWARE.white);
-            % draw text
-            Screen('TextSize',HARDWARE.window,STORY.FontSize);
-            DrawFormattedText(HARDWARE.window,...
-                STIM.Block(BT).TextStory,'center','center',...
-                STIM.TextIntensity);
-            vbl = Screen('Flip', HARDWARE.window);
-            Screen('TextSize',HARDWARE.window,GENERAL.FontSize);
-            % wait for key press
-            pause(1);
-            KbWait; while KbCheck; end
-        end
-
         %% show block instructions --
         % draw background
         Screen('FillRect',HARDWARE.window,...
@@ -240,6 +198,7 @@ try
         %% Cycle over trials -------
         T=1;
         while ~QuitScript && T <= length(BLOCK(B).Trials)
+            TT = BLOCK(B).Trial(T).TT;
             %% repeat instruction every nth trial--
             if T>1 && mod(T-1,STIM.Block(BT).RepeatTextEveryNth)==0
                 % draw background
@@ -247,20 +206,6 @@ try
                     STIM.BackColor*HARDWARE.white);
                 DrawFormattedText(HARDWARE.window,...
                     STIM.Block(BT).TextStart,'center','center',...
-                    STIM.TextIntensity);
-                vbl = Screen('Flip', HARDWARE.window);
-                % wait for key press
-                pause(1);
-                KbWait; while KbCheck; end
-            end
-
-            %% trial-based instructions --
-            if ~isempty(STIM.TrialType(BLOCK(B).Trial(T).TT).TrialText)
-                % draw background
-                Screen('FillRect',HARDWARE.window,...
-                    STIM.BackColor*HARDWARE.white);
-                DrawFormattedText(HARDWARE.window,...
-                    STIM.TrialType(BLOCK(B).Trial(T).TT).TrialText,'center','center',...
                     STIM.TextIntensity);
                 vbl = Screen('Flip', HARDWARE.window);
                 % wait for key press
@@ -276,14 +221,22 @@ try
             Screen('FillOval', HARDWARE.window,...
                     STIM.Fix.Color.*HARDWARE.white,STIM.Fix.Rect);
             vbl = Screen('Flip', HARDWARE.window);
-            pause(STIM.Trial.Timing.FixDur)
+            
+            rr = STIM.Trial.Timing.FixDurRand(2)-...
+                STIM.Trial.Timing.FixDurRand(1);
+            FixDur = STIM.Trial.Timing.FixDur + ...
+                (STIM.Trial.Timing.FixDurRand(1)+(rr*rand(1)));
+            pause(FixDur)
 
             %% show stimulus --
             % draw background
             Screen('FillRect',HARDWARE.window,...
                     STIM.BackColor*HARDWARE.white);
             % draw stimulus
-            run(['drawstim_' student]);
+            run('drawstim_colrew');
+            % fixation
+            Screen('FillOval', HARDWARE.window,...
+                    STIM.Fix.Color.*HARDWARE.white,STIM.Fix.Rect);
             vbl = Screen('Flip', HARDWARE.window);
             t0 = GetSecs; 
             ResponseGiven = false;
@@ -301,30 +254,54 @@ try
                         LOG.Block(B).Trial(T).RT = secs - t0;
                         LOG.Block(B).Trial(T).Resp = 1;
                         ResponseGiven = true;
+                        RespRec = true;
                     elseif keyCode(Key2)
-                        %fprintf('Key 0 pressed\n')
                         LOG.Block(B).Trial(T).RT = secs - t0;
-                        LOG.Block(B).Trial(T).Resp = 0;
+                        LOG.Block(B).Trial(T).Resp = 2;
                         ResponseGiven = true;
+                        RespRec = true;
+                    elseif keyCode(Key3)
+                        LOG.Block(B).Trial(T).RT = secs - t0;
+                        LOG.Block(B).Trial(T).Resp = 3;
+                        ResponseGiven = true;    
+                        RespRec = true;
                     end
                 end
             end
 
             %% Give feedback --
-            if STIM.Exp.FB.Do && ...
-                    ((B>1 && T>0 && mod(T,STIM.Exp.FB.EveryNthTrial)==0) || ...
-                    (B==1 && T>=STIM.Exp.FB.StartAfter && mod(T,STIM.Exp.FB.EveryNthTrial)==0))
-                % draw background
+            if LOG.Block(B).Trial(T).RT <= STIM.Trial.Timing.MaxRT
+                if LOG.Block(B).Trial(T).Resp == STIM.TrialType(TT).Correct
+                    % correct
+                    Screen('FillRect',HARDWARE.window,...
+                        STIM.BackColor*HARDWARE.white);
+                    DrawFormattedText(HARDWARE.window,...
+                        ['Correct: ' num2str(STIM.TrialType(TT).Reward) ...
+                        ' points'],'center','center',...
+                        STIM.TextIntensity);
+                    vbl = Screen('Flip', HARDWARE.window);
+                    pause(STIM.Exp.FB.Duration);
+                else
+                    % wrong
+                    Screen('FillRect',HARDWARE.window,...
+                        STIM.BackColor*HARDWARE.white);
+                    DrawFormattedText(HARDWARE.window,...
+                        'Wrong Choice','center','center',...
+                        STIM.TextIntensity);
+                    vbl = Screen('Flip', HARDWARE.window);
+                    pause(STIM.Exp.FB.Duration);
+                end
+            else
+               % too slow
                 Screen('FillRect',HARDWARE.window,...
                     STIM.BackColor*HARDWARE.white);
-                fbi = randi(length(STIM.Exp.FB.Text));
                 DrawFormattedText(HARDWARE.window,...
-                    STIM.Exp.FB.Text{fbi},'center','center',...
+                    'Too slow','center','center',...
                     STIM.TextIntensity);
                 vbl = Screen('Flip', HARDWARE.window);
-                pause(STIM.Exp.FB.Duration);
+                pause(STIM.Exp.FB.Duration); 
             end
-
+            
             %% ITI
             Screen('FillRect',HARDWARE.window,STIM.BackColor*HARDWARE.white);
             vbl = Screen('Flip', HARDWARE.window);
@@ -344,21 +321,14 @@ try
     end
 
     %% Save the data ----------------------------------------------------
-    % remove the images from the log to save space
-    if STIM.RemoveImagesFromLog
-        for i = 1: size(STIM.img,1)
-            for j = 1:size(STIM.img,2)
-                STIM.img(i,j).img = [];
-            end
-        end
-    end
-    [~,~] = mkdir(fullfile(StartFolder,DataFolder,HARDWARE.LogLabel));
-    save(fullfile(StartFolder,DataFolder,HARDWARE.LogLabel,LOG.FileName),...
-        'HARDWARE','GENERAL','STIM','BLOCK','LOG');
-    
-    % also save a csv file for quick stats
-    run(['write_csv_' student]);
+    if RespRec
+        [~,~] = mkdir(fullfile(StartFolder,DataFolder,HARDWARE.LogLabel));
+        save(fullfile(StartFolder,DataFolder,HARDWARE.LogLabel,LOG.FileName),...
+            'HARDWARE','GENERAL','STIM','BLOCK','LOG');
 
+        % also save a csv file for quick stats
+        run('write_csv_colrew');
+    end
 catch e %#ok<CTCH> %if there is an error the script will go here
     %% Clean up ---------------------------------------------------------
     fprintf(1,'There was an error! The message was:\n%s',e.message);

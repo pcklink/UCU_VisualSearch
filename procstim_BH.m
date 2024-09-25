@@ -56,9 +56,9 @@ for BB = 1:length(BlockOrder)
     Trials = [];
     for T = 1:STIM.Block(B).TrialRepeats
         if STIM.Block(B).RandomTrialTypes
-            Trials = [Trials BLOCK(BB).TrialTypes];
-        else
             Trials = [Trials Shuffle(BLOCK(BB).TrialTypes)];
+        else
+            Trials = [Trials BLOCK(BB).TrialTypes];
         end
     end
     BLOCK(BB).Trials = Trials;
@@ -91,15 +91,32 @@ for BB = 1:length(BlockOrder)
             error('More distractors than available locations.');
         else
             BLOCK(BB).Trial(T).DistPos = dpos(1:STIM.TrialType(TI).nDistract);
+            
+            distcnt = 0;
+            while distcnt <= STIM.TrialType(TI).nDistract
+                for i=1:length(STIM.TrialType(TI).Distractor)
+                    for j = 1:size(STIM.TrialType(TI).DistractorColor{i},1)
+                        distcnt = distcnt+1;
+                        distlist{distcnt,1} = STIM.TrialType(TI).Distractor{i};
+                        distlist{distcnt,2} = STIM.TrialType(TI).DistractorColor{i}(j,:);
+                    end
+                end
+            end
+            distlist=distlist(randperm(size(distlist,1)),:);
+            distlist = distlist(1:STIM.TrialType(TI).nDistract,:);
+            
             for nd = 1:length(BLOCK(BB).Trial(T).DistPos)
-                Dtype = randi(length(STIM.TrialType(TI).Distractor));
-                BLOCK(BB).Trial(T).DistType{nd} = ...
-                    STIM.TrialType(TI).Distractor{Dtype};
-                BLOCK(BB).Trial(T).DistType{nd};
-                Dcols = STIM.TrialType(TI).DistractorColor{Dtype};
-                Dcol = randi(size(Dcols,1));
-                BLOCK(BB).Trial(T).DistColor{nd} = ...
-                    STIM.TrialType(TI).DistractorColor{Dtype}(Dcol,:);
+                % Dtype = randi(length(STIM.TrialType(TI).Distractor));
+                % BLOCK(BB).Trial(T).DistType{nd} = ...
+                %     STIM.TrialType(TI).Distractor{Dtype};
+                % 
+                % Dcols = STIM.TrialType(TI).DistractorColor{Dtype};
+                % Dcol = randi(size(Dcols,1));
+                % BLOCK(BB).Trial(T).DistColor{nd} = ...
+                %     STIM.TrialType(TI).DistractorColor{Dtype}(Dcol,:);
+
+                BLOCK(BB).Trial(T).DistType{nd} = distlist{nd,1};
+                BLOCK(BB).Trial(T).DistColor{nd} = distlist{nd,2};
             end
         end
         

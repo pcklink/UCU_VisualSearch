@@ -1,4 +1,4 @@
-% Settings file for Ruby's experiment =====================================
+% Settings file for Ruby's reward experiment ==============================
 
 %% Hardware variables ===================================================
 % Some definitions to specify hardware specifics
@@ -12,7 +12,7 @@ switch HARDWARE.Location
         HARDWARE.DistFromScreen = 570;
 end
 
-HARDWARE.LogLabel = 'Reward'; % change this!
+HARDWARE.LogLabel = 'RewardAssociation'; % change this!
 % will be used to generate subfolders for dfferent log types
 
 %% General parameters ===================================================
@@ -35,39 +35,26 @@ STIM.WelcomeText = ['Blablabla\n\n'...
                     '>> Press any key to start <<'];
 
 %% Stimulus features (specific) =========================================
-STIM.Positions.n = [6 4]; % [w h]
+STIM.Positions.xy = [-5 5; -5 -5; 5 -5; 5 5]; % [w h]
 STIM.Positions.jitter = 2; % dva
-STIM.ResponseBar.size = [0.2 0.5]; % dva
-STIM.ResponseBar.color = [0.5 0.5 0.5];
 
 STIM.Trial.Timing.FixDur = 2; % s
+STIM.Trial.Timing.FixDurRand = [-0.5 1.5]; % s window around
 
 STIM.TrialType(1).Target = 'oval'; %
 STIM.TrialType(1).TargetSize = [2 2]; % [w h] dva
 STIM.TrialType(1).TargetColor = [1 0 0];
-STIM.TrialType(1).Distractor = {'rect'};
-STIM.TrialType(1).DistractorSize = [2 2];
-STIM.TrialType(1).DistractorColor = {[0 0 1]};
-STIM.TrialType(1).nDistract = 23;
-STIM.TrialType(1).SearchType = 'feature'; % conjunction/feature
-STIM.TrialType(1).TrialText = ['Search red oval, report bar orientation\n\n'...
-    'Horizontal=1 Vertical=0\n\n'...
-    '>> Press any key to start <<']; % leave empty for none
-
+STIM.TrialType(1).Reward = 500;
 
 STIM.TrialType(2).Target = 'rect'; 
 STIM.TrialType(2).TargetSize = [2 2]; % dva
 STIM.TrialType(2).TargetColor = [0 1 0];
-STIM.TrialType(2).Distractor = {'rect','oval'};
-STIM.TrialType(2).DistractorSize = [2 2];
-STIM.TrialType(2).DistractorColor = {[1 0 0; 0 0 1] ,[1 0 0;0 1 0;0 0 1]};
-% Distractor{1} can have have Color{1}, 
-% Distractor{1} can have have Color{2}, etc
-STIM.TrialType(2).nDistract = 23;
-STIM.TrialType(2).SearchType = 'conjunction'; % conjunction/feature
-STIM.TrialType(2).TrialText = ['Search green rectangle, report bar orientation\n\n'...
-    'Horizontal=1 Vertical=0\n\n'...
-    '>> Press any key to start <<']; % leave empty for none
+STIM.TrialType(2).Reward = 5;
+
+STIM.TrialType(2).Target = 'rect'; 
+STIM.TrialType(2).TargetSize = [2 2]; % dva
+STIM.TrialType(2).TargetColor = [0 1 0];
+STIM.TrialType(2).Reward = 5;
 
 STIM.Block(1).TrialTypes = [1 1];
 STIM.Block(1).RandomTrialTypes = true;

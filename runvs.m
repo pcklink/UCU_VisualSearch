@@ -197,6 +197,24 @@ try
     while ~QuitScript && B <= STIM.nBlocks
         BT = BLOCK(B).BlockType;
         
+        % if variant NS, show emotion story
+        if strcmp(student,'NS')
+            % draw background
+            Screen('FillRect',HARDWARE.window,...
+                STIM.BackColor*HARDWARE.white);
+            % draw text
+            Screen('TextSize',HARDWARE.window,STORY.FontSize);
+            DrawFormattedText(HARDWARE.window,...
+                STIM.Block(BT).TextStory,'center','center',...
+                STIM.TextIntensity);
+            vbl = Screen('Flip', HARDWARE.window);
+            Screen('TextSize',HARDWARE.window,GENERAL.FontSize);
+            % wait for key press
+            pause(1);
+            KbWait; while KbCheck; end
+        end
+
+
         % show block instructions --
         % draw background
         Screen('FillRect',HARDWARE.window,...

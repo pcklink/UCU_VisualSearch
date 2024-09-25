@@ -1,4 +1,4 @@
-function runvs(student,settingsnr,debug)
+function run_vs(student,settingsnr,debug)
 
 %% PTB3 script for ======================================================
 % VISUAL SEARCH experiments
@@ -319,7 +319,8 @@ try
                     STIM.BackColor*HARDWARE.white);
                 fbi = randi(length(STIM.Exp.FB.Text));
                 DrawFormattedText(HARDWARE.window,...
-                    STIM.Exp.FB.Text{fbi},'center','center',...
+                    ['Hi ' LOG.Subject '!\n\n'...
+                    STIM.Exp.FB.Text{fbi}],'center','center',...
                     STIM.TextIntensity);
                 vbl = Screen('Flip', HARDWARE.window);
                 pause(STIM.Exp.FB.Duration);
@@ -344,14 +345,6 @@ try
     end
 
     %% Save the data ----------------------------------------------------
-    % remove the images from the log to save space
-    if STIM.RemoveImagesFromLog
-        for i = 1: size(STIM.img,1)
-            for j = 1:size(STIM.img,2)
-                STIM.img(i,j).img = [];
-            end
-        end
-    end
     [~,~] = mkdir(fullfile(StartFolder,DataFolder,HARDWARE.LogLabel));
     save(fullfile(StartFolder,DataFolder,HARDWARE.LogLabel,LOG.FileName),...
         'HARDWARE','GENERAL','STIM','BLOCK','LOG');

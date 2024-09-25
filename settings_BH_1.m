@@ -89,7 +89,7 @@ STIM.Exp.Blocks = [1 2]; % you can do multiple repeats of the same Blocktype
 STIM.Exp.RandomBlocks = true;
 
 STIM.Exp.FB.Do = true;
-STIM.Exp.FB.Duration = 2; % seconds
+STIM.Exp.FB.Duration = 4; % seconds
 STIM.Exp.FB.Text = {'Better than 90% of participants', ...
     'Far above average performance', 'Doing fantastic!'}; 
 % you can add more, one will randomly be chosen.
@@ -98,7 +98,3 @@ STIM.Exp.FB.StartAfter = 10; % only start giving feedback after this many trials
 STIM.Exp.FB.EveryNthTrial = 5; 
 
 STIM.Exp.ITI = 1;
-
-%% Saving the data ======================================================
-% here you can remove the actual images from the log to save space
-STIM.RemoveImagesFromLog = false;

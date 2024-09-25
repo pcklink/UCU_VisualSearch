@@ -63,9 +63,9 @@ for BB = 1:length(BlockOrder)
     Trials = [];
     for T = 1:STIM.Block(B).TrialRepeats
         if STIM.Block(B).RandomTrialTypes
-            Trials = [Trials BLOCK(BB).TrialTypes];
-        else
             Trials = [Trials Shuffle(BLOCK(BB).TrialTypes)];
+        else
+            Trials = [Trials BLOCK(BB).TrialTypes];
         end
     end
     BLOCK(BB).Trials = Trials;

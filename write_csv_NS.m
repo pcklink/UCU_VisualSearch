@@ -1,10 +1,11 @@
 % write data to a csv file for easy use in JASP
-% Column 1  BlockNr
-% Column 2  TrialNr
-% Column 3  Stimulus angry(0)/happy(1)
-% Column 4  Report angry(0)/happy(1)
-% Column 5  RT
-% Column 6  Unique subject ID
+%  BlockNr
+%  TrialNr
+%  Stimulus angry(0)/happy(1)
+%  Report angry(0)/happy(1)
+%  Correct response (according to settings)
+%  RT
+%  Unique subject ID
 
 r=1;
 for B = 1:length(LOG.Block)
@@ -16,6 +17,8 @@ for B = 1:length(LOG.Block)
         CSVLOG(r).SearchType = ...
             STIM.TrialType(TT).TargetFld;
         CSVLOG(r).Response = LOG.Block(B).Trial(T).Resp;
+        CSVLOG(r).CorrResp = ...
+            STIM.TrialType(TT).CorrectResp;
         CSVLOG(r).RT = LOG.Block(B).Trial(T).RT;
         CSVLOG(r).SubID = LOG.SubID;
         r=r+1;

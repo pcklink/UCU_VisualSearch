@@ -170,8 +170,6 @@ try
     vbl = Screen('Flip', HARDWARE.window);
     Screen('FillRect',HARDWARE.window,...
         STIM.BackColor*HARDWARE.white);
-    DrawFormattedText(HARDWARE.window,...
-        'Exiting...','center','center',STIM.TextIntensity);
     vbl = Screen('Flip', HARDWARE.window);
 
     %% Process stimuli --------------------------------------------------
@@ -336,6 +334,17 @@ try
         end
         B=B+1;
     end
+
+    %% show block instructions --
+    % draw background
+    Screen('FillRect',HARDWARE.window,...
+        STIM.BackColor*HARDWARE.white);
+    % draw text
+    DrawFormattedText(HARDWARE.window,...
+        'All done. Thank you!','center','center',...
+        STIM.TextIntensity);
+    vbl = Screen('Flip', HARDWARE.window);
+    pause(2);
 
     %% Restore screen
     Screen('CloseAll');ListenChar();ShowCursor;

@@ -39,7 +39,7 @@ STIM.WelcomeText = ['Blablabla\n\n'...
 %% Stimulus features (specific) =========================================
 STIM.Positions.n = [6 4]; % [w h]
 STIM.Positions.jitter = 2; % dva
-STIM.ResponseBar.size = [0.2 0.5]; % dva
+STIM.ResponseBar.size = [0.2 0.5]; % NB! first value should be < second
 STIM.ResponseBar.color = [0.5 0.5 0.5];
 
 STIM.Trial.Timing.FixDur = 2; % s
@@ -82,8 +82,9 @@ STIM.Block(2).TextStart = ['Search white square, report bar orientation\n\n'...
     '>> Press any key to start <<'];
 STIM.Block(2).RepeatTextEveryNth = 5; 
 
-STIM.Key1 = '1!';
-STIM.Key2 = '0)';
+% make sure instructions match this and Key1 = hori / Key2 = vert
+STIM.Key1 = '1!'; % hori
+STIM.Key2 = '0)'; % vert
 
 STIM.Exp.Blocks = [1 2]; % you can do multiple repeats of the same Blocktype
 STIM.Exp.RandomBlocks = true;

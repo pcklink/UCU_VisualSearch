@@ -1,12 +1,12 @@
 % write data to a csv file for easy use in JASP
-% Column 1  BlockNr
-% Column 2  TrialNr
-% Column 4  Target shape
-% Column 5  Target color
-% Column 6  Target color index
-% Column 7  Response 
-% Column 8  RT
-% Column 9  Unique subject ID
+% BlockNr
+% TrialNr
+% Target shape
+% Target color
+% Target color index
+% Response 
+% RT
+% Unique subject ID
 
 r=1;
 for B = 1:length(LOG.Block)

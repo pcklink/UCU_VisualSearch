@@ -17,8 +17,8 @@ STARTPOINT = [round(ORIGIN(1)+(hSTEP/2)) ...
 jitter = [-round(STIM.Positions.jitter*HARDWARE.Deg2Pix/2) ...
     round(STIM.Positions.jitter*HARDWARE.Deg2Pix/2)];
 
-STIM.ResponseBar.rect{1} = [0 0 STIM.ResponseBar.size*HARDWARE.Deg2Pix];
-STIM.ResponseBar.rect{2} = [0 0 fliplr(STIM.ResponseBar.size)*HARDWARE.Deg2Pix];
+STIM.ResponseBar.rect{1} = [0 0 STIM.ResponseBar.size*HARDWARE.Deg2Pix]; %vert
+STIM.ResponseBar.rect{2} = [0 0 fliplr(STIM.ResponseBar.size)*HARDWARE.Deg2Pix]; %hori
 
 GridPositions = STARTPOINT;
 for i = 1:STIM.Positions.n(1)-1

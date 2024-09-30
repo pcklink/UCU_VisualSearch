@@ -54,6 +54,7 @@ STIM.TrialType(1).DistractorSize = [3 4];
 STIM.TrialType(1).nDistract = 9;
 STIM.TrialType(1).SearchType = 'emotion'; % conjunction/feature
 STIM.TrialType(1).TrialText = [];
+STIM.TrialType(1).CorrectResp = 1; % NB! not checked but written in csv
 
 STIM.TrialType(2).TargetFld = 'angry'; % image folder
 STIM.TrialType(2).Target = 'random'; % pick a random image or specify filename
@@ -63,6 +64,7 @@ STIM.TrialType(2).DistractorSize = [3 4];
 STIM.TrialType(2).nDistract = 9;
 STIM.TrialType(2).SearchType = 'emotion'; % conjunction/feature
 STIM.TrialType(2).TrialText = [];
+STIM.TrialType(2).CorrectResp = 0; % NB! not checked but written in csv
 
 STIM.Block(1).TrialTypes = [1 1 1 1 1 1 1 2 2 2 2 2 2 2];
 STIM.Block(1).RandomTrialTypes = true;

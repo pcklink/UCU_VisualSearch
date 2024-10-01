@@ -332,10 +332,30 @@ try
             pause(STIM.Exp.ITI);
             T=T+1;
         end
+        
+        % Do a questionnaire if needed
+        if ~isempty(STIM.Block(BT).Questionnaire) && STIM.Block(BT).Questionnaire ~= 0 
+            qidx = STIM.Block(BT).Questionnaire;
+            LOG.Block(B).QuestAnswers = questionnaire(...
+                STIM.Questionnaire(qidx), ...
+                HARDWARE,STIM);
+            LOG.Block(B).Questionnaire = STIM.Questionnaire(qidx);
+            Screen('TextSize',HARDWARE.window,GENERAL.FontSize);
+        end
         B=B+1;
     end
 
-    %% show block instructions --
+    % Do a questionnaire if needed
+    if ~isempty(STIM.Exp.Questionnaire) && STIM.Exp.Questionnaire ~= 0
+        qidx = STIM.Exp.Questionnaire;
+        LOG.QuestAnswers = questionnaire(...
+            STIM.Questionnaire(qidx),...
+            HARDWARE,STIM);
+        LOG.Questionnaire = STIM.Questionnaire(qidx);
+        Screen('TextSize',HARDWARE.window,GENERAL.FontSize);
+    end
+
+    %% show thank you text --
     % draw background
     Screen('FillRect',HARDWARE.window,...
         STIM.BackColor*HARDWARE.white);

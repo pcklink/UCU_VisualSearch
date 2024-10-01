@@ -66,13 +66,14 @@ STIM.TrialType(2).nDistract = 23;
 STIM.TrialType(2).SearchType = 'conjunction'; % conjunction/feature
 STIM.TrialType(2).TrialText = [];
 
-STIM.Block(1).TrialTypes = [1 1];
+STIM.Block(1).TrialTypes = [1];
 STIM.Block(1).RandomTrialTypes = true;
-STIM.Block(1).TrialRepeats = 10;
+STIM.Block(1).TrialRepeats = 2;
 STIM.Block(1).TextStart = ['Search oval, report bar orientation\n\n'...
     'Horizontal=1 Vertical=0\n\n'...
     '>> Press any key to start <<'];
 STIM.Block(1).RepeatTextEveryNth = 5; 
+STIM.Block(1).Questionnaire = 1; % leave empty [] for non
 
 STIM.Block(2).TrialTypes = [2 2];
 STIM.Block(2).RandomTrialTypes = true;
@@ -81,13 +82,15 @@ STIM.Block(2).TextStart = ['Search white square, report bar orientation\n\n'...
     'Horizontal=1 Vertical=0\n\n'...
     '>> Press any key to start <<'];
 STIM.Block(2).RepeatTextEveryNth = 5; 
+STIM.Block(2).Questionnaire = 2; % leave empty [] for non
 
 % make sure instructions match this and Key1 = hori / Key2 = vert
 STIM.Key1 = '1!'; % hori
 STIM.Key2 = '0)'; % vert
 
-STIM.Exp.Blocks = [1 2]; % you can do multiple repeats of the same Blocktype
+STIM.Exp.Blocks = [1]; % you can do multiple repeats of the same Blocktype
 STIM.Exp.RandomBlocks = true;
+STIM.Exp.Questionnaire = []; % leave empty [] for non
 
 STIM.Exp.FB.Do = true;
 STIM.Exp.FB.Duration = 4; % seconds
@@ -99,3 +102,15 @@ STIM.Exp.FB.StartAfter = 10; % only start giving feedback after this many trials
 STIM.Exp.FB.EveryNthTrial = 5; 
 
 STIM.Exp.ITI = 1;
+
+%% Questionaire ========================================================
+% all questions on 5pt likert scale sliders
+STIM.Questionnaire(1).Question(1).QuestText = ['How badly do you want an answer?\n\n'...
+    'Not at all  -----  Very much so'];
+STIM.Questionnaire(1).Question(2).QuestText = ['What about now?\n\n'...
+    'Not at all  -----  Very much so'];
+
+STIM.Questionnaire(2).Question(1).QuestText = ['How badly do you want an answer?\n\n'...
+    'Not at all  -----  Very much so'];
+STIM.Questionnaire(2).Question(2).QuestText = ['What about now?\n\n'...
+    'Not at all  -----  Very much so'];

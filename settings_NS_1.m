@@ -73,6 +73,7 @@ STIM.Block(1).TextStory = STORY.happy(1).text;
 STIM.Block(1).TextStart = ['Is there a HAPPY or ANGRY face?\n\n'...
     'Happy=1 Angry=0\n\n>> Press any key to start <<'];
 STIM.Block(1).RepeatTextEveryNth = 500; 
+STIM.Block(1).Questionnaire = []; % leave empty [] for non
 
 STIM.Block(2).TrialTypes = [2];
 STIM.Block(2).RandomTrialTypes = true;
@@ -81,12 +82,14 @@ STIM.Block(2).TextStory = STORY.anger(1).text;
 STIM.Block(2).TextStart = ['Is there a HAPPY or ANGRY face?\n\n'...
     'Happy=1 Angry=0\n\n>> Press any key to start <<'];
 STIM.Block(2).RepeatTextEveryNth = 500; 
+STIM.Block(2).Questionnaire = []; % leave empty [] for non
 
 STIM.Key1 = '1!';
 STIM.Key2 = '0)';
 
 STIM.Exp.Blocks = [1]; % you can do multiple repeats of the same Blocktype
 STIM.Exp.RandomBlocks = true;
+STIM.Exp.Questionnaire = []; % leave empty [] for non
 
 STIM.Exp.FB.Do = false;
 STIM.Exp.FB.Duration = 2; % seconds
@@ -98,3 +101,15 @@ STIM.Exp.FB.StartAfter = 10; % only start giving feedback after this many trials
 STIM.Exp.FB.EveryNthTrial = 5; 
 
 STIM.Exp.ITI = 1;
+
+%% Questionaire ========================================================
+% all questions on 5pt likert scale sliders
+STIM.Questionnaire(1).Question(1).QuestText = ['How badly do you want an answer?\n\n'...
+    'Not at all  -----  Very much so'];
+STIM.Questionnaire(1).Question(2).QuestText = ['What about now?\n\n'...
+    'Not at all  -----  Very much so'];
+
+STIM.Questionnaire(2).Question(1).QuestText = ['How badly do you want an answer?\n\n'...
+    'Not at all  -----  Very much so'];
+STIM.Questionnaire(2).Question(2).QuestText = ['What about now?\n\n'...
+    'Not at all  -----  Very much so'];

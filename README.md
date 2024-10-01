@@ -5,14 +5,15 @@ visual search experiments. You run an experiment with:
 `run_vs(<student>,<settingsnr>,<debug>)`
 
 The arguments mean the following:    
-`student` is used to dissociate between the three experiments. Use `BH`,`NS`, 
-or `RB` respectively.     
-`settingsnr` is used to make it possible to have different settingsfiles per
+- `student` is used to dissociate between the three experiments. Use `'BH'`,`'NS'`, 
+or `'RB'` respectively.         
+- `settingsnr` is used to make it possible to have different settingsfiles per
 experiment. You can omit it, in which case the code will assume `1`. In all 
 other cases, the code will look for a settings file `settings_<student>_<settingsnr>.m`, 
 for instance `settings_BH_1.m`.    
-`debug` is used to test the code. It will not show the experiment fullscreen. 
+- `debug` is used to test the code. It will not show the experiment fullscreen. 
 You can omit it, and it will be `false` by default when running the exp.
+- Example: `run_vs('BH',1,0)`    
 
 ## SEARCH TASK
 

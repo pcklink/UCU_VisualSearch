@@ -1,4 +1,4 @@
-function answers = questionnaire(Q,HARDWARE,STIM)
+function [answers, QuitScript] = questionnaire(Q,HARDWARE,STIM)
 
 linedva = [15 0.2];
 linerect = [0 0 linedva(1) linedva(2)].*HARDWARE.Deg2Pix;
@@ -15,7 +15,7 @@ MoveQuestionUp = 3; %dva
 TextSize = 20;
 Screen('TextSize',HARDWARE.window,TextSize);
 
-keyIsDown = false;
+keyIsDown = false; QuitScript = false;
 
 % draw background
 Screen('FillRect',HARDWARE.window,STIM.BackColor*HARDWARE.white);
@@ -28,17 +28,19 @@ DrawFormattedText(HARDWARE.window,...
 Screen('Flip', HARDWARE.window);
 KbWait; while KbCheck; end
 
-for qidx = 1:length(Q.Question) 
+qidx = 1;
+while qidx <= length(Q.Question) && ~QuitScript
+   
     resp = []; 
     keyWasDown = false;
     selpos=3;
 
-    while keyIsDown
+    while keyIsDown && ~QuitScript
         %wait until keys are released
         [keyIsDown,secs,keyCode]=KbCheck;
     end  
     
-    while isempty(resp)
+    while isempty(resp) && ~QuitScript
         % draw background
         Screen('FillRect',HARDWARE.window,STIM.BackColor*HARDWARE.white);
         % draw text
@@ -79,6 +81,9 @@ for qidx = 1:length(Q.Question)
                 selpos = selpos+1;
                 if selpos>5; selpos=5; end
                 keyWasDown = true;
+            elseif keyCode(KeyBreak) %break when esc
+                QuitScript=1;
+                break;
             end
         elseif ~keyIsDown && keyWasDown
             keyWasDown = false;
@@ -86,4 +91,5 @@ for qidx = 1:length(Q.Question)
     end
     answers(qidx).rate = selpos; %#ok<*AGROW>
     pause(0.5);
+    qidx = qidx+1;
 end

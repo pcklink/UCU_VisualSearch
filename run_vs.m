@@ -312,6 +312,7 @@ try
 
             %% Give feedback --
             if ~QuitScript && STIM.Exp.FB.Do && ...
+                    strcmp(STIM.Exp.FB.When, 'Trials') && ...
                     ((B>1 && T>0 && mod(T,STIM.Exp.FB.EveryNthTrial)==0) || ...
                     (B==1 && T>=STIM.Exp.FB.StartAfter && mod(T,STIM.Exp.FB.EveryNthTrial)==0))
                 % draw background
@@ -323,7 +324,14 @@ try
                     STIM.Exp.FB.Text{fbi}],'center','center',...
                     STIM.TextIntensity);
                 vbl = Screen('Flip', HARDWARE.window);
-                pause(STIM.Exp.FB.Duration);
+                if isempty(STIM.Exp.FB.Duration)
+                    pause(1); % pause minimally 1 sec
+                    % then wait for key press
+                    KbWait; while KbCheck; end 
+                else
+                    % pause for specific duration.
+                    pause(STIM.Exp.FB.Duration);
+                end
             end
 
             %% ITI
@@ -336,21 +344,42 @@ try
         % Do a questionnaire if needed
         if ~isempty(STIM.Block(BT).Questionnaire) && STIM.Block(BT).Questionnaire ~= 0 
             qidx = STIM.Block(BT).Questionnaire;
-            LOG.Block(B).QuestAnswers = questionnaire(...
-                STIM.Questionnaire(qidx), ...
-                HARDWARE,STIM);
+            [LOG.Block(B).QuestAnswers, QuitScript] = questionnaire(...
+                STIM.Questionnaire(qidx), HARDWARE, STIM);
             LOG.Block(B).Questionnaire = STIM.Questionnaire(qidx);
             Screen('TextSize',HARDWARE.window,GENERAL.FontSize);
         end
         B=B+1;
+
+        %% Give feedback --
+        if ~QuitScript && STIM.Exp.FB.Do && ...
+                strcmp(STIM.Exp.FB.When, 'Block')
+            % draw background
+            Screen('FillRect',HARDWARE.window,...
+                STIM.BackColor*HARDWARE.white);
+            fbi1 = randi(length(STIM.Exp.FB.PersonalText));
+            fbi2 = randi(length(STIM.Exp.FB.Text));
+            DrawFormattedText(HARDWARE.window,...
+                [STIM.Exp.FB.PersonalText{fbi1} ' ' LOG.Subject '!\n\n'...
+                STIM.Exp.FB.Text{fbi2}],'center','center',...
+                STIM.TextIntensity);
+            vbl = Screen('Flip', HARDWARE.window);
+            if isempty(STIM.Exp.FB.Duration)
+                pause(1); % pause minimally 1 sec
+                % then wait for key press
+                KbWait; while KbCheck; end
+            else
+                % pause for specific duration.
+                pause(STIM.Exp.FB.Duration);
+            end
+        end
     end
 
     % Do a questionnaire if needed
     if ~isempty(STIM.Exp.Questionnaire) && STIM.Exp.Questionnaire ~= 0
         qidx = STIM.Exp.Questionnaire;
-        LOG.QuestAnswers = questionnaire(...
-            STIM.Questionnaire(qidx),...
-            HARDWARE,STIM);
+        [LOG.QuestAnswers, QuitScript] = questionnaire(...
+            STIM.Questionnaire(qidx), HARDWARE, STIM);
         LOG.Questionnaire = STIM.Questionnaire(qidx);
         Screen('TextSize',HARDWARE.window,GENERAL.FontSize);
     end

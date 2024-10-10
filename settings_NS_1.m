@@ -92,11 +92,14 @@ STIM.Exp.RandomBlocks = true;
 STIM.Exp.Questionnaire = []; % leave empty [] for non
 
 STIM.Exp.FB.Do = false;
-STIM.Exp.FB.Duration = 2; % seconds
+STIM.Exp.FB.Duration = 4; % seconds; use [] for 'until key-press'
+STIM.Exp.FP.PersonalText = {'Hi!', 'Something personal'};
 STIM.Exp.FB.Text = {'Better than 90% of participants', ...
     'Far above average performance', 'Doing fantastic!'}; 
 % you can add more, one will randomly be chosen.
 STIM.Exp.FB.Type = 'Positive'; % Neutral/Positive
+STIM.Exp.FB.When = 'Block'; % 'Block' or 'Trials'
+% these will only apply if When = 'Trials'
 STIM.Exp.FB.StartAfter = 10; % only start giving feedback after this many trials
 STIM.Exp.FB.EveryNthTrial = 5; 
 

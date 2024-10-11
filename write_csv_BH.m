@@ -28,12 +28,10 @@ for B = 1:length(LOG.Block)
         CSVLOG(r).BarOrient = ...
             -(BLOCK(B).Trial(T).TBar-2);
         CSVLOG(r).Response = LOG.Block(B).Trial(T).Resp;
-        if STIM.ResponseBar.rect{BLOCK(Bidx).Trial(Tidx).DBar(di)}(3) > ...
-                STIM.ResponseBar.rect{BLOCK(Bidx).Trial(Tidx).DBar(di)}(4) % hori
-            CSVLOG(r).CorrResp = 1;
-        elseif STIM.ResponseBar.rect{BLOCK(Bidx).Trial(Tidx).DBar(di)}(3) < ...
-                STIM.ResponseBar.rect{BLOCK(Bidx).Trial(Tidx).DBar(di)}(4) % vert
+        if BLOCK(B).Trial(T).TBar == 1 % vert
             CSVLOG(r).CorrResp = 0;
+        elseif BLOCK(B).Trial(T).TBar == 2 % hor
+            CSVLOG(r).CorrResp = 1;
         else
             CSVLOG(r).CorrResp = 9; % not possible [square rep bar]
         end

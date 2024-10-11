@@ -286,7 +286,7 @@ try
             t0 = GetSecs; 
             ResponseGiven = false;
 
-            % Get response and log things --
+            %% Get response and log things --
             % Check for key-presses
             while ~ResponseGiven
                 [keyIsDown,secs,keyCode]=KbCheck; %#ok<*ASGLU>

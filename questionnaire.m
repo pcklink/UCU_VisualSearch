@@ -84,6 +84,8 @@ while qidx <= length(Q.Question) && ~QuitScript
             elseif keyCode(KeyBreak) %break when esc
                 QuitScript=1;
                 break;
+            else % unknown key
+                keyWasDown = true;
             end
         elseif ~keyIsDown && keyWasDown
             keyWasDown = false;

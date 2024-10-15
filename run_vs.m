@@ -418,5 +418,13 @@ catch e %#ok<CTCH> %if there is an error the script will go here
     fprintf(1,'There was an error! The message was:\n%s',e.message);
     Screen('CloseAll');ListenChar();ShowCursor;
     psychrethrow(psychlasterror);
+    % still save the data to be sure
+    if RespRec
+        [~,~] = mkdir(fullfile(StartFolder,DataFolder,HARDWARE.LogLabel));
+        save(fullfile(StartFolder,DataFolder,HARDWARE.LogLabel,LOG.FileName),...
+            'HARDWARE','GENERAL','STIM','BLOCK','LOG');
+        % also save a csv file for quick stats
+        run(['write_csv_' student]);
+    end
 end
 cd(StartFolder); % back to where we started

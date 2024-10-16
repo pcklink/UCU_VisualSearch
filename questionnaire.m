@@ -81,7 +81,7 @@ while qidx <= length(Q.Question) && ~QuitScript
                 selpos = selpos+1;
                 if selpos>5; selpos=5; end
                 keyWasDown = true;
-            elseif keyCode(KeyBreak) %break when esc
+            elseif keyCode(STIM.KeyBreak) %break when esc
                 QuitScript=1;
                 break;
             else % unknown key

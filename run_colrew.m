@@ -88,9 +88,9 @@ try
     KeyFix = KbName('space');
 
     if ~IsLinux
-        KeyBreak = KbName('Escape');
+        STIM.KeyBreak = KbName('Escape');
     else
-        KeyBreak = KbName('ESCAPE');
+        STIM.KeyBreak = KbName('ESCAPE');
     end
     ListenChar(2);
 
@@ -246,7 +246,7 @@ try
             while ~ResponseGiven
                 [keyIsDown,secs,keyCode]=KbCheck; %#ok<*ASGLU>
                 if keyIsDown
-                    if keyCode(KeyBreak) %break when esc
+                    if keyCode(STIM.KeyBreak) %break when esc
                         %fprintf('Escape pressed\n')
                         QuitScript=1;
                         break;
